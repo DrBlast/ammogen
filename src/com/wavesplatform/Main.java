@@ -45,7 +45,7 @@ public class Main extends Defaults {
 
         System.out.println("Enter results file name. default: `masstx.txt`");
         String val = in.nextLine();
-        String fileName = val.equals("") ? "masstx.txt" : val;
+        String fileName = val.equals("") ? "ammo/masstx.txt" : val;
         MassTransferAmmo massTransferAmmo = new MassTransferAmmo(richAkk, node);
         massTransferAmmo.genMasstTx(seed, fileName);
     }
@@ -77,7 +77,7 @@ public class Main extends Defaults {
     private static void prepareOrderHistory(Scanner in, String seed) throws InterruptedException, IOException, TimeoutException, URISyntaxException {
         System.out.println("Enter results file name. default: `orders.txt`");
         String val = in.nextLine();
-        String fileName = val.equals("") ? "orders.txt" : val;
+        String fileName = val.equals("") ? "ammo/orders.txt" : val;
 
         MatcherAmmo matcherAmmo = new MatcherAmmo(richAkk, node);
         matcherAmmo.prepareOHTest(seed, fileName);
@@ -86,7 +86,7 @@ public class Main extends Defaults {
     private static void orderHistory(Scanner in, String seed) throws InterruptedException, IOException, TimeoutException, URISyntaxException {
         System.out.println("Enter results file name. default: `full-history.txt`");
         String val = in.nextLine();
-        String fileName = val.equals("") ? "full-history.txt" : val;
+        String fileName = val.equals("") ? "ammo/full-history.txt" : val;
 
         MatcherAmmo matcherAmmo = new MatcherAmmo(richAkk, node);
         matcherAmmo.orderHistory(seed, fileName);
@@ -95,7 +95,7 @@ public class Main extends Defaults {
     private static void orderHistoryPair(Scanner in, String seed) throws InterruptedException, IOException, TimeoutException, URISyntaxException {
         System.out.println("Enter results file name. default: `history-by-pair.txt`");
         String val = in.nextLine();
-        String fileName = val.equals("") ? "history-by-pair.txt" : val;
+        String fileName = val.equals("") ? "ammo/history-by-pair.txt" : val;
         System.out.println("Enter amount asset: ");
         String amountAsset = in.nextLine();
         System.out.println("Enter price asset: ");
@@ -108,7 +108,7 @@ public class Main extends Defaults {
     private static void placeOrders(Scanner in, String seed) throws URISyntaxException, InterruptedException, IOException, TimeoutException {
         System.out.println("Enter results file name. default: `orders.txt`");
         String val = in.nextLine();
-        String fileName = val.equals("") ? "orders.txt" : val;
+        String fileName = val.equals("") ? "ammo/orders.txt" : val;
 
         MatcherAmmo matcherAmmo = new MatcherAmmo(richAkk, node);
         matcherAmmo.generateOrdersManyAsset(seed, fileName);
@@ -117,7 +117,7 @@ public class Main extends Defaults {
     private static void cancelOrders(Scanner in, String seed) throws URISyntaxException, InterruptedException, IOException, TimeoutException {
         System.out.println("Enter results file name. default: `cancel-orders.txt`");
         String val = in.nextLine();
-        String fileName = val.equals("") ? "cancel-orders.txt" : val;
+        String fileName = val.equals("") ? "ammo/cancel-orders.txt" : val;
 
         MatcherAmmo matcherAmmo = new MatcherAmmo(richAkk, node);
         matcherAmmo.genCancel(seed, fileName);
@@ -126,7 +126,7 @@ public class Main extends Defaults {
     private static void matching(Scanner in, String seed) throws URISyntaxException, InterruptedException, IOException, TimeoutException {
         System.out.println("Enter results file name. default: `matching.txt`");
         String val = in.nextLine();
-        String fileName = val.equals("") ? "matching.txt" : val;
+        String fileName = val.equals("") ? "ammo/matching.txt" : val;
 
         MatcherAmmo matcherAmmo = new MatcherAmmo(richAkk, node);
         matcherAmmo.generateOrdersManyAssetWithFilling(seed, fileName);
