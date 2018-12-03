@@ -88,6 +88,7 @@ public class MassTransferAmmo {
                 else
                     normedAmount = amount;
 
+                List<String> nextAmmo = new ArrayList<>();
                 for (List<PrivateKeyAccount> x : pPk) {
                     j++;
                     if (j < 150)
@@ -96,12 +97,10 @@ public class MassTransferAmmo {
                         timestamp += 1000;
                     MassTransferTransaction tx = massTransfer(asset, transfersList(x, normedAmount), timestamp);
 
-                    List<String> nextAmmo = new ArrayList<>();
-                    nextAmmo.add(tx.getId() + "\r\n");
-                    nextAmmo.add(ammoSteps.printPostWithDeafultHeaders(getJson(tx), "/transactions/broadcast", "MASS"));
 
-                    Files.write(Paths.get(fileName), nextAmmo, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                    nextAmmo.add(ammoSteps.printPostWithDeafultHeaders(getJson(tx), "/transactions/broadcast", "MASS"));
                 }
+                Files.write(Paths.get(fileName), nextAmmo, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             }
 
         }
