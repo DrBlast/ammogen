@@ -3,6 +3,7 @@ package com.wavesplatform;
 import com.wavesplatform.generators.ApiAmmoGen;
 import com.wavesplatform.generators.MassTransferAmmo;
 import com.wavesplatform.generators.MatcherAmmo;
+import com.wavesplatform.generators.TransferAmmo;
 import com.wavesplatform.wavesj.Node;
 import com.wavesplatform.wavesj.PrivateKeyAccount;
 
@@ -16,15 +17,13 @@ import static com.wavesplatform.TestVariables.*;
 
 public class Main extends Defaults {
 
-    public static int getChoice() {
-
+    private static int getChoice() {
         int selection;
         Scanner input = new Scanner(System.in);
 
-        /***************************************************/
-
         System.out.println("Choose from these choices");
         System.out.println("-------------------------\n");
+        System.out.println("0 - Transfer");
         System.out.println("1 - MassTransfer");
         System.out.println("2 - Api load");
         System.out.println("3 - Get blocks stats");
@@ -32,8 +31,10 @@ public class Main extends Defaults {
         System.out.println("4 - Prepare order history test");
         System.out.println("5 - Full order history test");
         System.out.println("6 - Order history by pair");
+        System.out.println("-------------------------\n");
         System.out.println("7 - Place orders");
         System.out.println("8 - Cancel orders");
+        System.out.println("-------------------------\n");
         System.out.println("9 - Matching");
 
         selection = input.nextInt();
@@ -41,7 +42,16 @@ public class Main extends Defaults {
     }
 
 
-    private static void masstransfer(Scanner in, String seed) throws URISyntaxException, InterruptedException, TimeoutException, IOException {
+    private static void transfer(Scanner in, String seed) throws URISyntaxException, InterruptedException, TimeoutException, IOException {
+
+        System.out.println("Enter results file name. default: `trtx.txt`");
+        String val = in.nextLine();
+        String fileName = val.equals("") ? "ammo/trtx.txt" : val;
+        TransferAmmo transferAmmo = new TransferAmmo(richAkk, node);
+        transferAmmo.genTransferTxs(seed, fileName);
+    }
+
+    private static void massTransfer(Scanner in, String seed) throws URISyntaxException, InterruptedException, TimeoutException, IOException {
 
         System.out.println("Enter results file name. default: `masstx.txt`");
         String val = in.nextLine();
@@ -50,8 +60,8 @@ public class Main extends Defaults {
         massTransferAmmo.genMasstTx(seed, fileName);
     }
 
-    private static void apiLoad(Scanner in, String seed) throws URISyntaxException, InterruptedException, TimeoutException, IOException {
-        System.out.println("Enter number of tx, default `30` (recomend): ");
+    private static void apiLoad(Scanner in, String seed) throws URISyntaxException, IOException {
+        System.out.println("Enter number of tx, default `30` (recommend): ");
         String val = in.nextLine();
         int txNum = val.equals("") ? 30 : Integer.parseInt(val);
         System.out.println("Reuse file with transactions? Y/N: ");
@@ -83,7 +93,7 @@ public class Main extends Defaults {
         matcherAmmo.prepareOHTest(seed, fileName);
     }
 
-    private static void orderHistory(Scanner in, String seed) throws InterruptedException, IOException, TimeoutException, URISyntaxException {
+    private static void orderHistory(Scanner in, String seed) throws IOException, URISyntaxException {
         System.out.println("Enter results file name. default: `full-history.txt`");
         String val = in.nextLine();
         String fileName = val.equals("") ? "ammo/full-history.txt" : val;
@@ -92,7 +102,7 @@ public class Main extends Defaults {
         matcherAmmo.orderHistory(seed, fileName);
     }
 
-    private static void orderHistoryPair(Scanner in, String seed) throws InterruptedException, IOException, TimeoutException, URISyntaxException {
+    private static void orderHistoryPair(Scanner in, String seed) throws IOException, URISyntaxException {
         System.out.println("Enter results file name. default: `history-by-pair.txt`");
         String val = in.nextLine();
         String fileName = val.equals("") ? "ammo/history-by-pair.txt" : val;
@@ -114,7 +124,7 @@ public class Main extends Defaults {
         matcherAmmo.generateOrdersManyAsset(seed, fileName);
     }
 
-    private static void cancelOrders(Scanner in, String seed) throws URISyntaxException, InterruptedException, IOException, TimeoutException {
+    private static void cancelOrders(Scanner in, String seed) throws URISyntaxException, IOException {
         System.out.println("Enter results file name. default: `cancel-orders.txt`");
         String val = in.nextLine();
         String fileName = val.equals("") ? "ammo/cancel-orders.txt" : val;
@@ -132,8 +142,6 @@ public class Main extends Defaults {
         matcherAmmo.generateOrdersManyAssetWithFilling(seed, fileName);
     }
 
-
-
     public static void main(String[] args) throws InterruptedException, IOException, URISyntaxException, TimeoutException {
         System.setProperty("env", args[0]);
 
@@ -150,9 +158,13 @@ public class Main extends Defaults {
         String seed = val.equals("") ? defaultTestSeed : val;
         String fileName;
         switch (choice) {
+            //TRANSFER
+            case 0:
+                transfer(in, val);
+                break;
             //MASS TRANSFER
             case 1:
-                masstransfer(in, val);
+                massTransfer(in, val);
                 break;
 
             //API LOAD
@@ -188,10 +200,7 @@ public class Main extends Defaults {
 
     }
 
-
-
-
-    private static void fillDefaultValues() throws URISyntaxException {
+    public static void fillDefaultValues() throws URISyntaxException {
         defaultTestSeed = TestVariables.getTestSeed();
         nodeUrl = getProtocol() + getHost();
         matcherUrl = getMatcherUrl();

@@ -1,4 +1,11 @@
-.idea
+.idea/
 .iml
-out
-/src/META-INF/
+.ips
+.iwr
+
+ammo/
+out/
+src/META-INF/
+*.jar
+*.txt
+*.bkp

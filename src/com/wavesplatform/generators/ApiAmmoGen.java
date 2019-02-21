@@ -46,7 +46,7 @@ public class ApiAmmoGen {
     //0.241692% blocks/seq
     //1.81269% /transactions/unconfirmed
 
-    public void genApiLoadAmmo(String seed, int txByAddress, boolean reuse) throws InterruptedException, TimeoutException, IOException {
+    public void genApiLoadAmmo(String seed, int txByAddress, boolean reuse) throws IOException {
 
         int accountsNum = 2500;
         int startNonce = 0;

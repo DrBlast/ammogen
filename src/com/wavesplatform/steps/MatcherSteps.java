@@ -35,8 +35,8 @@ public class MatcherSteps extends NodeDefaults {
     }
 
 
-    public String placeOrder(PrivateKeyAccount pk, Order.Type orderType, AssetPair pair, Long amount, Long orderPrice, int orderLifeTime) throws InterruptedException, IOException {
-        Long orderLifeTimeInMillis = System.currentTimeMillis() + orderLifeTime * 1000;
+    public String placeOrder(PrivateKeyAccount pk, Order.Type orderType, AssetPair pair, Long amount, Long orderPrice, int orderLifeTimeInSeconds) throws IOException {
+        Long orderLifeTimeInMillis = System.currentTimeMillis() + orderLifeTimeInSeconds * 1000;
         Order signedOrder = Transactions.makeOrderTx(pk, matcherNode.getMatcherKey(), orderType, pair,
                 orderPrice, amount, orderLifeTimeInMillis, 300000);
         MatcherResponse placedOrder = steps.sendPost(UtilsSteps.getJson(signedOrder), MatcherResponse.class, MethodEnum.PLACE_ORDER);
@@ -46,22 +46,21 @@ public class MatcherSteps extends NodeDefaults {
     }
 
 
-    public com.wavesplatform.wavesj.matcher.Order prepareOrder(PrivateKeyAccount pk, Order.Type orderType, AssetPair pair, Long amount, Long orderPrice, int orderLifeTime) throws InterruptedException, IOException {
-        Long orderLifeTimeInMillis = System.currentTimeMillis() + orderLifeTime * 1000;
+    public com.wavesplatform.wavesj.matcher.Order prepareOrder(PrivateKeyAccount pk, Order.Type orderType, AssetPair pair, Long amount, Long orderPrice, int orderLifeTime) {
+        long orderLifeTimeInMillis = System.currentTimeMillis() + orderLifeTime * 1000;
 
-        Order o = Transactions.makeOrderTx(pk, "BvfTcXu4d9Nsge8Woz42QW94Rf7MKcjtMYQz4L6MAPFX", orderType, pair,
+        return Transactions.makeOrderTx(pk, "BvfTcXu4d9Nsge8Woz42QW94Rf7MKcjtMYQz4L6MAPFX", orderType, pair,
                 orderPrice, amount, orderLifeTimeInMillis, 300000);
-        return o;
     }
 
 
 
-    public String placeOrder(PrivateKeyAccount pk, Order.Type orderType, AssetPair pair, int orderLifeTime, double amount, double price) throws InterruptedException, IOException {
+    public String placeOrder(PrivateKeyAccount pk, Order.Type orderType, AssetPair pair, int orderLifeTime, double amount, double price) throws IOException {
         return placeOrder(pk, orderType, pair, normAmount(amount, pair), normPrice(price, pair), orderLifeTime);
     }
 
 
-    public Order prepareOrder(PrivateKeyAccount pk, Order.Type orderType, AssetPair pair, int orderLifeTime, double amount, double price) throws InterruptedException, IOException {
+    public Order prepareOrder(PrivateKeyAccount pk, Order.Type orderType, AssetPair pair, int orderLifeTime, double amount, double price) throws IOException {
         return prepareOrder(pk, orderType, pair, normAmount(amount, pair), normPrice(price, pair), orderLifeTime);
     }
 
