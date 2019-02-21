@@ -38,123 +38,75 @@ public class TestVariables {
         return variables;
     }
 
-    public static void setVariable(String name, Object value) {
+    public static Object setVariable(String name, Object value) {
         variables.put(name, value);
+        return getVariable(name);
     }
 
     public static Object getVariable(String name) {
-        if (variables.get(name) != null)
-            return variables.get(name);
-        else
-            throw new Error(String.format("Variable %s not found, name"));
+        if (variables.get(name) == null)
+            throw new Error(String.format("Variable '%s' not found", name));
+
+        return variables.get(name);
     }
 
     public static String getTestSeed() {
-        if (variables.get("test-seed") != null)
-            return (String) TestVariables.getVariable("test-seed");
-        else
-            throw new Error("Variable 'test-defaultTestSeed' not found");
+        return (String) getVariable("test-seed");
     }
 
     public static String getRichSeed() {
-        if (variables.get("secondSeed") != null)
-            return (String) TestVariables.getVariable("secondSeed");
-        else
-            throw new Error("Variable 'secondSeed' not found");
+        return (String) getVariable("secondSeed");
     }
 
     public static String getThirdSeed() {
-        if (variables.get("thirdSeed") != null)
-            return (String) TestVariables.getVariable("thirdSeed");
-        else
-            return "";
+        return (String) getVariable("thirdSeed");
     }
 
     public static String getSecondAddress() {
-        if (variables.get("secondAddress") != null)
-            return (String) TestVariables.getVariable("secondAddress");
-        else
-            throw new Error("Variable 'secondAddress' not found");
-    }
-
-    public static Byte getSchemaByte() {
-        if (variables.get("schema") != null)
-            if (TestVariables.getVariable("schema").equals("D"))
-                return 68;
-            else if (TestVariables.getVariable("schema").equals("W"))
-                return 87;
-            else if (TestVariables.getVariable("schema").equals("W"))
-                return 84;
-
-        throw new Error("Variable 'secondAddress' not found");
+        return (String) getVariable("secondAddress");
     }
 
     public static byte getChainId() {
-        if (variables.get("schema") != null)
-            return (byte) ((String) TestVariables.getVariable("schema")).charAt(0);
-        else
-            throw new Error("Variable 'secondAddress' not found");
+        String schema = getVariable("schema").toString();
+        if (schema.length() != 1 || "ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(schema.charAt(0)) < 0) {
+            throw new Error("Value of 'schema' must be a single letter");
+        }
+        return (byte) schema.charAt(0);
     }
 
     public static String getDefaultContentType() {
-        if (variables.get("defaultContentType") != null)
-            return (String) TestVariables.getVariable("defaultContentType");
-        else {
-            TestVariables.setVariable("defaultContentType", CONTENT_TYPE);
-            return CONTENT_TYPE;
+        try {
+            return (String) getVariable("defaultContentType");
+        } catch(Error e) {
+            return (String) setVariable("defaultContentType", CONTENT_TYPE);
         }
-
     }
 
     public static String getAssetId() {
-        if (variables.get("assetId") != null)
-            return (String) TestVariables.getVariable("assetId");
-        else
-            throw new Error("Variable 'assetId' not found");
+        return (String) getVariable("assetId");
     }
 
     public static String getHost() {
-        if (variables.get("host") != null)
-            return (String) TestVariables.getVariable("host");
-        else
-            throw new Error("Variable 'host' not found");
+        return (String) getVariable("host");
     }
 
     public static String getProtocol() {
-        if (variables.get("protocol") != null)
-            return (String) TestVariables.getVariable("protocol");
-        else
-            throw new Error("Variable 'protocol' not found");
+        return (String) getVariable("protocol");
     }
 
-
     public static String getApiKey() {
-        if (variables.get("api-key") != null)
-            return (String) TestVariables.getVariable("api-key");
-        else
-            throw new Error("Variable 'api-key' not found");
+        return (String) getVariable("api-key");
     }
 
     public static String getMatcherUrl() {
-        if (variables.get("matcher") != null)
-            return (String) TestVariables.getVariable("matcher");
-        else
-            throw new Error("Variable 'matcher' not found");
-
+        return (String) getVariable("matcher");
     }
 
     public static String getBtcAssetId() {
-        if (variables.get("btc") != null)
-            return (String) TestVariables.getVariable("btc");
-        else
-            throw new Error("Variable 'btc' not found");
+        return (String) getVariable("btc");
     }
 
-
     public static String getLoadHosts() {
-        if (variables.get("loadhosts") != null)
-            return (String) TestVariables.getVariable("loadhosts");
-        else
-            throw new Error("Variable 'loadhosts' not found");
+        return (String) getVariable("loadhosts");
     }
 }

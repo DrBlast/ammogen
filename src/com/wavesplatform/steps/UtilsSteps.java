@@ -6,26 +6,25 @@ import com.wavesplatform.helpers.MethodEnum;
 import com.wavesplatform.helpers.NodeDefaults;
 import com.wavesplatform.TestVariables;
 import com.wavesplatform.response.TransactionInfo;
-import com.wavesplatform.response.UtxSize;
 import com.wavesplatform.wavesj.*;
 import com.wavesplatform.wavesj.json.WavesJsonMapper;
 import com.wavesplatform.wavesj.transactions.IssueTransactionV2;
 import com.wavesplatform.wavesj.transactions.MassTransferTransaction;
 import org.apache.commons.lang3.RandomStringUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
 
 import static com.google.common.collect.Lists.partition;
-import static com.wavesplatform.TestVariables.getRichSeed;
+import static com.wavesplatform.TestVariables.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class UtilsSteps extends NodeDefaults {
-
 
     private BackendSteps steps;
     private Node node;
@@ -36,16 +35,15 @@ public class UtilsSteps extends NodeDefaults {
         this.steps = new BackendSteps();
         this.matcher = new MatcherSteps();
     }
-
     
-    public void waitForHeightArise() throws IOException, InterruptedException {
+    public int waitForHeightArise() throws IOException, InterruptedException {
         int h = node.getHeight();
         while (node.getHeight() != h + 1) {
-            Thread.sleep(1000);
+            Thread.sleep(5000);
         }
+        return h + 1;
     }
 
-    
     public void waitForTransaction(String txId) throws InterruptedException, UnsupportedEncodingException, TimeoutException {
         TransactionInfo txInfo = steps.sendGetAndWaitSuccess(TransactionInfo.class, MethodEnum.TRANSACTION_INFO, txId);
     }
@@ -60,9 +58,11 @@ public class UtilsSteps extends NodeDefaults {
     }
 
     
-    public String issueAsset(PrivateKeyAccount pk, byte decimals) throws IOException, TimeoutException, InterruptedException {
+    public String issueAsset(PrivateKeyAccount pk, byte decimals, String script) throws IOException, TimeoutException, InterruptedException, URISyntaxException {
         PrivateKeyAccount sAccount = PrivateKeyAccount.fromSeed(getRichSeed(), 0, chainId);
         String assetName = RandomStringUtils.randomAlphabetic(5) + "_" + decimals;
+
+        String encodedCompiledScript = (script == null) ? null : new Node(TestVariables.getProtocol() + getHost().replace("/", ""), getChainId()).compileScript(script);
 
         IssueTransactionV2 issueAsset = Transactions.makeIssueTx(
                 sAccount,
@@ -72,7 +72,7 @@ public class UtilsSteps extends NodeDefaults {
                 Long.MAX_VALUE,
                 decimals,
                 true,
-                null,
+                encodedCompiledScript,
                 ISSUE_FEE);
 
         TransactionInfo issueTxInfo = steps.sendPost(getJson(issueAsset), TransactionInfo.class, MethodEnum.ASSETS_ISSUE);
@@ -81,14 +81,14 @@ public class UtilsSteps extends NodeDefaults {
     }
 
     
-    public String issueAsset(byte decimals) throws IOException, TimeoutException, InterruptedException {
+    public String issueAsset(byte decimals, String script) throws IOException, TimeoutException, InterruptedException, URISyntaxException {
         PrivateKeyAccount richAccount = PrivateKeyAccount.fromSeed(getRichSeed(), 0, chainId);
-        return issueAsset(richAccount, decimals);
+        return issueAsset(richAccount, decimals, script);
     }
 
     
-    public String massTransfer(PrivateKeyAccount fromAcc, String assetId, List<Transfer> transfers) throws IOException, TimeoutException, InterruptedException {
-        MassTransferTransaction massTransfer = Transactions.makeMassTransferTx(fromAcc, assetId, transfers, 100000 + (transfers.size() + 1) * 50000, null);
+    public String massTransfer(PrivateKeyAccount fromAcc, String assetId, List<Transfer> transfers, long extraFee) throws IOException {
+        MassTransferTransaction massTransfer = Transactions.makeMassTransferTx(fromAcc, assetId, transfers, 100000 + (transfers.size() + 1) * 50000 + extraFee, null);
         TransactionInfo massTransferInfo = steps.sendPost(getJson(massTransfer), TransactionInfo.class, MethodEnum.BROADCAST);
         return massTransfer.getId().toString();
     }
@@ -102,32 +102,25 @@ public class UtilsSteps extends NodeDefaults {
     }
 
     
-    public void distributeWaves(PrivateKeyAccount richAccount, List<PrivateKeyAccount> pks, long amount, boolean norm) throws InterruptedException, IOException, TimeoutException {
+    public void distributeWaves(PrivateKeyAccount richAccount, List<PrivateKeyAccount> pks, long amount, boolean norm, long extraFee) throws IOException {
+        long normedAmount = (norm) ? matcher.normAmount(amount, 8) : amount;
 
-        long normedAmount = 0L;
-        if (norm) {
-            normedAmount = matcher.normAmount(amount, 8);
-        } else
-            normedAmount = amount;
         Collection<List<PrivateKeyAccount>> pPk = partition(pks, 100);
         for (List<PrivateKeyAccount> x : pPk) {
-            massTransfer(richAccount, Asset.WAVES, transfersList(x, normedAmount));
+            massTransfer(richAccount, Asset.WAVES, transfersList(x, normedAmount), extraFee);
         }
     }
 
     
-    public void distributeAssets(PrivateKeyAccount richAccount, List<PrivateKeyAccount> pks, Map<String, Integer> assetMap, long amount, boolean norm) throws
-            IOException, InterruptedException, TimeoutException {
+    public void distributeAssets(PrivateKeyAccount richAccount, List<PrivateKeyAccount> pks, Map<String, Integer> assetMap, long amount, boolean norm, long extraFee) throws
+            IOException {
 
         for (String asset : assetMap.keySet()) {
-            long normedAmount = 0L;
-            if (norm)
-                normedAmount = matcher.normAmount(amount, assetMap.get(asset));
-            else
-                normedAmount = amount;
+            long normedAmount = (norm) ? matcher.normAmount(amount, assetMap.get(asset)) : amount;
+
             Collection<List<PrivateKeyAccount>> pPk = partition(pks, 100);
             for (List<PrivateKeyAccount> x : pPk) {
-                massTransfer(richAccount, asset, transfersList(x, normedAmount));
+                massTransfer(richAccount, asset, transfersList(x, normedAmount), extraFee);
             }
         }
 
@@ -142,17 +135,14 @@ public class UtilsSteps extends NodeDefaults {
         return pks;
     }
 
-    
-    public int waitForEmptyUtx() throws UnsupportedEncodingException, InterruptedException {
-        UtxSize uSize = steps.sendGet(UtxSize.class, MethodEnum.UTX_SIZE);
-
-        while (uSize.getSize() != 0) {
-            Thread.sleep(500);
-            return waitForEmptyUtx();
+    public void setScriptToAccounts(List<PrivateKeyAccount> accounts, String script) throws IOException, TimeoutException, InterruptedException {
+        List<String> txIds = new ArrayList<>();
+        for (PrivateKeyAccount account : accounts) {
+            txIds.add(node.setScript(account, script, chainId, 1000000));
         }
-        return uSize.getSize();
+        for (String tx : txIds)
+            waitForTransaction(tx);
     }
-
     
     public Map<String, Integer> sortAssets(Map<String, Integer> unsorted) {
         KeyComparator bvc = new KeyComparator();
@@ -163,9 +153,7 @@ public class UtilsSteps extends NodeDefaults {
     }
 
 
-    public void deleteFile(String orderidsFile) {
-        File f = new File(orderidsFile);
-        if (f.exists())
-            f.delete();
+    public void deleteFile(String orderidsFile) throws IOException {
+        Files.deleteIfExists(Paths.get(orderidsFile));
     }
 }
