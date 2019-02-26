@@ -286,6 +286,7 @@ public class MatcherAmmo {
             ordersForAccount.put(pk, currentCount);
             Files.write(Paths.get(fileName), nextAmmo, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         }
+        System.out.println("Place orders done");
 
         while (!pks.isEmpty() && i < 600000) {
             List<String> nextAmmo = new ArrayList<>();
@@ -315,6 +316,8 @@ public class MatcherAmmo {
                     ordersForAccount.put(pk, currentCount);
             }
             Files.write(Paths.get(fileName), nextAmmo, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            if ( i % 10000 == 0)
+                System.out.println(i);
         }
 
     }
