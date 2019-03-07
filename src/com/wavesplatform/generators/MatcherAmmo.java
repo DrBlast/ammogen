@@ -135,7 +135,7 @@ public class MatcherAmmo {
                     nextAmmo.add(ammoSteps.printPostWithDefaultHeaders(getJson(oInfo2), "/matcher/orderbook", "FILL"));
 
                 }
-                CancelOrder cancel = Transactions.makeOrderCancelTx(pk, pair, oInfoX.getId().toString());
+                CancelOrder cancel = Transactions.makeOrderCancel(pk, pair, oInfoX.getId().toString());
                 nextAmmo.add(ammoSteps.printPostWithDefaultHeaders(getJson(cancel),
                         String.format("/matcher/orderbook/%s/%s/cancel", pair.getAmountAsset(), pair.getPriceAsset()), "CANCEL"));
             }
@@ -337,7 +337,7 @@ public class MatcherAmmo {
             for (Order o : oh) {
                 if (!o.isActive())
                     continue;
-                CancelOrder cancel = Transactions.makeOrderCancelTx(pks.get(i), o.getAssetPair(), o.getId().toString());
+                CancelOrder cancel = Transactions.makeOrderCancel(pks.get(i), o.getAssetPair(), o.getId().toString());
                 nextAmmo.add(ammoSteps.printPostWithDefaultHeaders(getJson(cancel),
                         String.format("/matcher/orderbook/%s/%s/cancel", o.getAssetPair().getAmountAsset(), o.getAssetPair().getPriceAsset()), "CANCEL"));
             }

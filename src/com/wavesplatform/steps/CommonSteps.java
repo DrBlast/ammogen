@@ -1,6 +1,10 @@
 package com.wavesplatform.steps;
 
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -43,4 +47,5 @@ public class CommonSteps {
     public void resultCodeShouldBeOK(String resultCode) {
         assertThat(resultCode, equalTo("ok"));
     }
+
 }

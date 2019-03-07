@@ -68,7 +68,7 @@ public class TransferAmmo {
         int accountsNum = 10;
         int assetsNum = 3;
 
-        String script = "let acc = base58'" + richPk.getAddress() + "'; wavesBalance(acc) > 0 && true";
+        String script = null;
 
         List<PrivateKeyAccount> pks = new ArrayList<>();
         pks.addAll(utils.getAccountsBySeed(seedPart + "x0", accountsNum, 0));
@@ -86,7 +86,6 @@ public class TransferAmmo {
         utils.waitForHeightArise();
 
         utils.distributeAssets(richPk, pks, assetMap, 10000, true, 400000);
-        utils.setScriptToAccounts(pks, script);
 
         writeDistributeAssets(pks, assetMap, assetAmount, true, fileName);
     }

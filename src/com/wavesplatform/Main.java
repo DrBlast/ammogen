@@ -1,9 +1,6 @@
 package com.wavesplatform;
 
-import com.wavesplatform.generators.ApiAmmoGen;
-import com.wavesplatform.generators.MassTransferAmmo;
-import com.wavesplatform.generators.MatcherAmmo;
-import com.wavesplatform.generators.TransferAmmo;
+import com.wavesplatform.generators.*;
 import com.wavesplatform.wavesj.Node;
 import com.wavesplatform.wavesj.PrivateKeyAccount;
 
@@ -18,6 +15,7 @@ import static com.wavesplatform.TestVariables.*;
 public class Main extends Defaults {
 
     private static int getChoice() {
+
         int selection;
         Scanner input = new Scanner(System.in);
 
@@ -36,11 +34,64 @@ public class Main extends Defaults {
         System.out.println("8 - Cancel orders");
         System.out.println("-------------------------\n");
         System.out.println("9 - Matching");
+        System.out.println("-------------------------\n");
+        System.out.println("10 - Issue");
+        System.out.println("11 - SetAssetScript");
+        System.out.println("12 - Asset Balance");
+        System.out.println("13 - Asset Transfer");
 
         selection = input.nextInt();
         return selection;
     }
 
+    private static void issue(Scanner in, String seed) throws IOException, URISyntaxException, InterruptedException {
+        System.out.println("Enter number of tx, default `100`");
+        String val = in.nextLine();
+        int txNum = val.equals("") ? 100 : Integer.parseInt(val);
+        System.out.println("Enter results file name. default: `isstx.txt`");
+        val = in.nextLine();
+        String fileName = val.equals("") ? "ammogen/ammo/isstx.txt" : val;
+        System.out.println("Scripted asset? Y/N");
+        val = in.nextLine();
+        boolean isScripted = val.toLowerCase().equals("y");
+        System.out.println("Enter number of issuers. default: `1`");
+        val = in.nextLine();
+        int issuersNum = val.equals("") ? 1 : Integer.parseInt(val);
+        IssueAmmo issueAmmo = new IssueAmmo(richAkk, node);
+        issueAmmo.genIssueTxs(issuersNum, txNum, isScripted, fileName, seed);
+    }
+
+    private static void setAssetScript(Scanner in) throws IOException, URISyntaxException {
+        System.out.println("Enter results file name. default: `setassetscrtx.txt`");
+        String val = in.nextLine();
+        String filename = val.equals("") ? "ammo/setassetscrtx.txt" : val;
+        SetAssetScriptAmmo setAssetScriptAmmo = new SetAssetScriptAmmo(richAkk, node);
+        setAssetScriptAmmo.genSetAssetScriptTxs("scriptedAssetIds.txt", richAkk, filename);
+    }
+
+    private static void assetTransfer(Scanner in, String seed) throws URISyntaxException, IOException {
+        System.out.println("Enter results file name. default: `assettransfertx.txt`");
+        String val = in.nextLine();
+        String filename = val.equals("") ? "ammogen/ammo/assettransfertx.txt" : val;
+        System.out.println("Enter assetIds file name. default: `scriptedAssetIds.txt`");
+        val = in.nextLine();
+        String assetIdsfileName = val.equals("") ? "scriptedAssetIds.txt" : val;
+        AssetTransferAmmo assetTransferAmmo = new AssetTransferAmmo(node);
+        assetTransferAmmo.genAssetTransferTxs(seed, assetIdsfileName, true, filename);
+    }
+
+    private static void assetBalance(Scanner in, String seed) throws URISyntaxException, IOException {
+        System.out.println("Enter results file name for AssetBalanceByAddress requests. default: `assetbalancebyaddress.txt`");
+        String val = in.nextLine();
+        String filename = val.equals("") ? "ammogen/ammo/assetbalancebyaddress.txt" : val;
+        System.out.println("Enter results file name for AssetBalanceByAssetId requests. default: `assetbalancebyassetid.txt`");
+        val = in.nextLine();
+        String filename2 = val.equals("") ? "ammogen/ammo/assetbalancebyassetid.txt" : val;
+        AssetBalanceAmmo assetBalanceAmmo = new AssetBalanceAmmo(node);
+        assetBalanceAmmo.genAssetBalanceByAddress(seed,filename);
+        assetBalanceAmmo.genAssetBalanceByAssetId(seed,"scriptedAssetIds2.txt", filename2);
+
+    }
 
     private static void transfer(Scanner in, String seed) throws URISyntaxException, InterruptedException, TimeoutException, IOException {
 
@@ -176,7 +227,7 @@ public class Main extends Defaults {
                 break;
             //prepare order history test
             case 4:
-               prepareOrderHistory(in, seed);
+                prepareOrderHistory(in, seed);
                 break;
             case 5:
                 orderHistory(in, seed);
@@ -188,10 +239,22 @@ public class Main extends Defaults {
                 placeOrders(in, seed);
                 break;
             case 8:
-                cancelOrders(in,seed);
+                cancelOrders(in, seed);
                 break;
             case 9:
-                matching(in,seed);
+                matching(in, seed);
+                break;
+            case 10:
+                issue(in, seed);
+                break;
+            case 11:
+                setAssetScript(in);
+                break;
+            case 12:
+                assetBalance(in, seed);
+                break;
+            case 13:
+                assetTransfer(in, seed);
                 break;
             default:
                 // The user input an unexpected choice.
