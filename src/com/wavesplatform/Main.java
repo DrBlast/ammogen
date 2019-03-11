@@ -50,7 +50,7 @@ public class Main extends Defaults {
         int txNum = val.equals("") ? 100 : Integer.parseInt(val);
         System.out.println("Enter results file name. default: `isstx.txt`");
         val = in.nextLine();
-        String fileName = val.equals("") ? "ammogen/ammo/isstx.txt" : val;
+        String fileName = val.equals("") ? "ammo/isstx.txt" : val;
         System.out.println("Scripted asset? Y/N");
         val = in.nextLine();
         boolean isScripted = val.toLowerCase().equals("y");
@@ -72,7 +72,7 @@ public class Main extends Defaults {
     private static void assetTransfer(Scanner in, String seed) throws URISyntaxException, IOException {
         System.out.println("Enter results file name. default: `assettransfertx.txt`");
         String val = in.nextLine();
-        String filename = val.equals("") ? "ammogen/ammo/assettransfertx.txt" : val;
+        String filename = val.equals("") ? "ammo/assettransfertx.txt" : val;
         System.out.println("Enter assetIds file name. default: `scriptedAssetIds.txt`");
         val = in.nextLine();
         String assetIdsfileName = val.equals("") ? "scriptedAssetIds.txt" : val;
@@ -83,10 +83,10 @@ public class Main extends Defaults {
     private static void assetBalance(Scanner in, String seed) throws URISyntaxException, IOException {
         System.out.println("Enter results file name for AssetBalanceByAddress requests. default: `assetbalancebyaddress.txt`");
         String val = in.nextLine();
-        String filename = val.equals("") ? "ammogen/ammo/assetbalancebyaddress.txt" : val;
+        String filename = val.equals("") ? "ammo/assetbalancebyaddress.txt" : val;
         System.out.println("Enter results file name for AssetBalanceByAssetId requests. default: `assetbalancebyassetid.txt`");
         val = in.nextLine();
-        String filename2 = val.equals("") ? "ammogen/ammo/assetbalancebyassetid.txt" : val;
+        String filename2 = val.equals("") ? "ammo/assetbalancebyassetid.txt" : val;
         AssetBalanceAmmo assetBalanceAmmo = new AssetBalanceAmmo(node);
         assetBalanceAmmo.genAssetBalanceByAddress(seed,filename);
         assetBalanceAmmo.genAssetBalanceByAssetId(seed,"scriptedAssetIds2.txt", filename2);
