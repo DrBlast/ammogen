@@ -4,6 +4,7 @@ import com.wavesplatform.TestVariables;
 import com.wavesplatform.steps.AmmoSteps;
 import com.wavesplatform.steps.CommonSteps;
 import com.wavesplatform.steps.UtilsSteps;
+import com.wavesplatform.wavesj.AssetBalance;
 import com.wavesplatform.wavesj.Node;
 import com.wavesplatform.wavesj.PrivateKeyAccount;
 
@@ -28,10 +29,13 @@ public class AssetBalanceAmmo {
     public void genAssetBalanceByAddress(String seedPart, String fileName) throws IOException {
         String path;
         try (FileWriter ammoWriter = new FileWriter(fileName)) {
-            for (int i = 0; i < 200; i++) {
-                PrivateKeyAccount pka = PrivateKeyAccount.fromSeed(seedPart, i, chainId);
-                path = String.format("/assets/balance/%s", pka.getAddress());
-                ammoWriter.write(ammoSteps.printGet(path, "ADDRESS_ASSET_BALANCE"));
+            for (int i = 0; i < 40; i++) {
+                PrivateKeyAccount pka = PrivateKeyAccount.fromSeed(seedPart + i, 0, chainId);
+                List<AssetBalance> assetBalanceList = node.getAssetsBalance(pka.getAddress());
+                if (assetBalanceList.size() < 501) {
+                    path = String.format("/assets/balance/%s", pka.getAddress());
+                    ammoWriter.write(ammoSteps.printGet(path, "ADDRESS_ASSET_BALANCE"));
+                }
             }
 //            for (int i = 0; i < 40; i++) {
 //                PrivateKeyAccount pka = PrivateKeyAccount.fromSeed(seedPart + i, 0, chainId);

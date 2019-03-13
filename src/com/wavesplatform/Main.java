@@ -7,6 +7,7 @@ import com.wavesplatform.wavesj.PrivateKeyAccount;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.concurrent.TimeoutException;
 
 import static com.wavesplatform.TestVariables.*;
@@ -39,6 +40,7 @@ public class Main extends Defaults {
         System.out.println("11 - SetAssetScript");
         System.out.println("12 - Asset Balance");
         System.out.println("13 - Asset Transfer");
+        System.out.println("14 - Asset Distribution");
 
         selection = input.nextInt();
         return selection;
@@ -76,7 +78,7 @@ public class Main extends Defaults {
         System.out.println("Enter assetIds file name. default: `scriptedAssetIds.txt`");
         val = in.nextLine();
         String assetIdsfileName = val.equals("") ? "scriptedAssetIds.txt" : val;
-        AssetTransferAmmo assetTransferAmmo = new AssetTransferAmmo(node);
+        AssetTransferAmmo assetTransferAmmo = new AssetTransferAmmo(richAkk, node);
         assetTransferAmmo.genAssetTransferTxs(seed, assetIdsfileName, true, filename);
     }
 
@@ -88,9 +90,36 @@ public class Main extends Defaults {
         val = in.nextLine();
         String filename2 = val.equals("") ? "ammo/assetbalancebyassetid.txt" : val;
         AssetBalanceAmmo assetBalanceAmmo = new AssetBalanceAmmo(node);
-        assetBalanceAmmo.genAssetBalanceByAddress(seed,filename);
-        assetBalanceAmmo.genAssetBalanceByAssetId(seed,"scriptedAssetIds2.txt", filename2);
+        assetBalanceAmmo.genAssetBalanceByAddress(seed, filename);
+        assetBalanceAmmo.genAssetBalanceByAssetId(seed, "scriptedAssetIds2.txt", filename2);
 
+    }
+
+    public static void assetDistribution(Scanner in) throws URISyntaxException, IOException {
+        System.out.println("Enter results file name for AssetDistribution requests. default: `assetdistribution.txt`");
+        String val = in.nextLine();
+        String filename = val.equals("") ? "ammo/assetdistribution.txt" : val;
+        System.out.println("Enter the file name with assetIds. default: `scriptedAssetIds2.txt`");
+        val = in.nextLine();
+        String assetIdsFilename = val.equals("") ? "scriptedAssetIds2.txt" : val;
+        AssetDistributionAmmo assetDistributionAmmo = new AssetDistributionAmmo(node);
+        assetDistributionAmmo.genAssetBalanceByAssetId(assetIdsFilename, filename);
+    }
+    public static void setSponsorship(Scanner in, String seed) throws URISyntaxException, IOException {
+        System.out.println("Enter results file name for SetSponsorship requests. default: `setsponsorship.txt`");
+        String val = in.nextLine();
+        String filename = val.equals("") ? "ammo/setsponsorship.txt" : val;
+        System.out.println("Enter the file name with assetIds. default: `scriptedAssetIds.txt`");
+        val = in.nextLine();
+        String assetIdsFilename = val.equals("") ? "scriptedAssetIds.txt" : val;
+        System.out.println("Enter number of transactions. default: `10`");
+        val = in.nextLine();
+        int txsQuantity = val.equals("") ? 10 : Integer.parseInt(val);
+        System.out.println("Enter number of assets issuers. default: `100000`");
+        val = in.nextLine();
+        int issuersQuantity = val.equals("") ? 100000 : Integer.parseInt(val);
+        SetSponsorshipAmmo setSponsorshipAmmo = new SetSponsorshipAmmo(node, richAkk);
+        setSponsorshipAmmo.genSponsorTxs(seed, txsQuantity, issuersQuantity, assetIdsFilename, filename);
     }
 
     private static void transfer(Scanner in, String seed) throws URISyntaxException, InterruptedException, TimeoutException, IOException {
@@ -255,6 +284,12 @@ public class Main extends Defaults {
                 break;
             case 13:
                 assetTransfer(in, seed);
+                break;
+            case 14:
+                assetDistribution(in);
+                break;
+            case 15:
+                setSponsorship(in, seed);
                 break;
             default:
                 // The user input an unexpected choice.

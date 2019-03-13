@@ -23,6 +23,7 @@ import static com.wavesplatform.steps.UtilsSteps.getJson;
 
 public class AssetTransferAmmo {
 
+    private PrivateKeyAccount richPk;
     private MatcherSteps matcher;
     private BackendSteps backendSteps;
     private AmmoSteps ammoSteps;
@@ -32,12 +33,13 @@ public class AssetTransferAmmo {
     private static byte chainId = TestVariables.getChainId();
 
 
-    public AssetTransferAmmo(Node node) throws URISyntaxException {
+    public AssetTransferAmmo(PrivateKeyAccount richPk, Node node) throws URISyntaxException {
         this.node = node;
         this.utils = new UtilsSteps(this.node);
         this.matcher = new MatcherSteps();
         this.backendSteps = new BackendSteps();
         this.ammoSteps = new AmmoSteps();
+        this.richPk = richPk;
         this.r = new Random();
     }
 
@@ -66,35 +68,37 @@ public class AssetTransferAmmo {
     }
 
     public void genAssetTransferTxs(String seedPart, String assetIdsFileName, boolean isScripted, String fileName) throws IOException {
+        utils.deleteFile(fileName);
+
         int accountsNum = 10;
         List<PrivateKeyAccount> pks = new ArrayList<>();
         pks.addAll(utils.getAccountsBySeed(seedPart + "x0", accountsNum, 1));
         pks.addAll(utils.getAccountsBySeed(seedPart + "x1", accountsNum, 1));
         PrivateKeyAccount senderPk;
-
+        List<PrivateKeyAccount> senderPks = new ArrayList<>();
+        List<String> distributedAssetIds = new ArrayList<>();
         for (int i = 0; i < 40; i++) {
             senderPk = PrivateKeyAccount.fromSeed(seedPart + i, 0, chainId);
-            List<String> distributedAssetIds = prepare(seedPart + i);//utils.parseAssetIdsFromFile(assetIdsFileName);
-            writeDistributeAssets(senderPk, pks, distributedAssetIds, isScripted, fileName);
+            senderPks.add(senderPk);
+            distributedAssetIds = prepare(seedPart + i);//utils.parseAssetIdsFromFile(assetIdsFileName);
+            if (distributedAssetIds.size() != 0)
+                writeDistributeAssets(senderPk, pks, distributedAssetIds, isScripted, fileName);
             System.out.println(i);
         }
+        long feeAmount = (long) (Math.ceil(distributedAssetIds.size() * 0.005));
+        utils.distributeWaves(richPk, senderPks, feeAmount, true, 0);
 
     }
 
     private List<String> prepare(String seedPart) throws IOException {
-
         List<String> ids = new ArrayList<>();
-        //
         PrivateKeyAccount senderPk = PrivateKeyAccount.fromSeed(seedPart, 0, chainId);
         List<AssetBalance> assetBalanceList = node.getAssetsBalance(senderPk.getAddress());
 
         for (int i = 0; i < assetBalanceList.size() / 2; i++) {
-//            for (AssetBalance ab : assetBalanceList) {
             if (assetBalanceList.get(i).balance == 1l)
                 ids.add(assetBalanceList.get(i).getPriceAsset());
         }
-        //  System.out.println(i);
-        //}
         return ids;
     }
 }

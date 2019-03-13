@@ -40,10 +40,10 @@ public class IssueAmmo {
             long timestamp = System.currentTimeMillis();
 
             for (PrivateKeyAccount pk : issuerPks) {
-                for (int i = 0; i < txsQuantity; i++){
-                    timestamp += 100;
-                    if (i % 3 == 0)
-                        timestamp += 100;
+                for (int i = 0; i < txsQuantity; i++) {
+                    if (i % 10 == 0) {
+                        timestamp += 1000;
+                    }
 
                     if (isScripted) {
                         IssueTransactionV2 tx = Transactions.makeIssueTx(pk, TestVariables.getChainId(), RandomStringUtils.randomAlphabetic(4), "desciption",
@@ -52,7 +52,7 @@ public class IssueAmmo {
                         ammoWriter.write(ammoSteps.printPostWithDefaultHeaders(getJson(tx), "/transactions/broadcast", "Issue"));
 
                     } else {
-                        IssueTransactionV2 tx = Transactions.makeIssueTx(pk,TestVariables.getChainId(), RandomStringUtils.randomAlphabetic(4), "description",
+                        IssueTransactionV2 tx = Transactions.makeIssueTx(pk, TestVariables.getChainId(), RandomStringUtils.randomAlphabetic(4), "description",
                                 quantity, decimals, true, null, 100000000, timestamp);
                         issuedAssetIds.add(tx.getId().toString());
                         ammoWriter.write(ammoSteps.printPostWithDefaultHeaders(getJson(tx), "/transactions/broadcast", "Issue"));
@@ -65,7 +65,7 @@ public class IssueAmmo {
         if (isScripted) {
             idsWriterFileName = "scriptedAssetIds2.txt";
         } else {
-            idsWriterFileName = "nonScriptedAssetIds.txt";
+            idsWriterFileName = "nonScriptedAssetIds2.txt";
         }
 
         try (FileWriter idsWriter = new FileWriter(idsWriterFileName)) {
@@ -78,12 +78,16 @@ public class IssueAmmo {
     public void genIssueTxs(int accountsQuantity, int txsQuantity, boolean isScripted, String fileName, String seed) throws IOException, InterruptedException {
         int assetsQuantity = 1;
         int decimals = 0;
+//        long feeAmmountSum = (long) Math.ceil(txsQuantity * 0.005);
 
         List<PrivateKeyAccount> pks = new ArrayList<>();
-//        for (int i =0; i < issuersQuantity; i++) {
-//            pks.addAll(utils.getAccountsBySeed(seed+i, 1, 0));
-//        }
-        pks.addAll(utils.getAccountsBySeed(seed, accountsQuantity, 0));
+        for (int i = 0; i < accountsQuantity; i++) {
+            pks.addAll(utils.getAccountsBySeed(seed + i + "accquantity" + accountsQuantity, 1, 0));
+        }
+        for (PrivateKeyAccount pk: pks){
+            System.out.println(pk.getAddress() + "\r\n");
+        }
+//        pks.addAll(utils.getAccountsBySeed(seed, accountsQuantity, 0));
 
         utils.distributeWaves(richPk, pks, txsQuantity, true, 0);
 //        utils.waitForHeightArise();
