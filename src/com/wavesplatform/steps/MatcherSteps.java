@@ -37,7 +37,7 @@ public class MatcherSteps extends NodeDefaults {
 
     public String placeOrder(PrivateKeyAccount pk, Order.Type orderType, AssetPair pair, Long amount, Long orderPrice, int orderLifeTimeInSeconds) throws IOException {
         Long orderLifeTimeInMillis = System.currentTimeMillis() + orderLifeTimeInSeconds * 1000;
-        Order signedOrder = Transactions.makeOrderTx(pk, matcherNode.getMatcherKey(), orderType, pair,
+        Order signedOrder = Transactions.makeOrder(pk, matcherNode.getMatcherKey(), orderType, pair,
                 orderPrice, amount, orderLifeTimeInMillis, 300000);
         MatcherResponse placedOrder = steps.sendPost(UtilsSteps.getJson(signedOrder), MatcherResponse.class, MethodEnum.PLACE_ORDER);
         Message matcherMessage = steps.deserialize(placedOrder.getMessage(), Message.class);
@@ -49,7 +49,7 @@ public class MatcherSteps extends NodeDefaults {
     public com.wavesplatform.wavesj.matcher.Order prepareOrder(PrivateKeyAccount pk, Order.Type orderType, AssetPair pair, Long amount, Long orderPrice, int orderLifeTime) {
         long orderLifeTimeInMillis = System.currentTimeMillis() + orderLifeTime * 1000;
 
-        return Transactions.makeOrderTx(pk, "BvfTcXu4d9Nsge8Woz42QW94Rf7MKcjtMYQz4L6MAPFX", orderType, pair,
+        return Transactions.makeOrder(pk, "BvfTcXu4d9Nsge8Woz42QW94Rf7MKcjtMYQz4L6MAPFX", orderType, pair,
                 orderPrice, amount, orderLifeTimeInMillis, 300000);
     }
 
@@ -86,7 +86,7 @@ public class MatcherSteps extends NodeDefaults {
     public void cancelOrder(PrivateKeyAccount pk, AssetPair assetPair, String orderId) throws InterruptedException {
         boolean orderCanceled = false;
         while (!orderCanceled) try {
-            CancelOrder cancelOrder = Transactions.makeOrderCancelTx(pk, assetPair, orderId);
+            CancelOrder cancelOrder = Transactions.makeOrderCancel(pk, assetPair, orderId);
             MatcherResponse cancelledOrder = steps.sendPost(UtilsSteps.getJson(cancelOrder), MatcherResponse.class, MethodEnum.CANCEL_ORDER, TestVariables.getBtcAssetId());
             if (cancelledOrder.getStatus().equals("OrderCanceled")) {
                 orderCanceled = true;

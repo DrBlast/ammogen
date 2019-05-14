@@ -12,6 +12,8 @@ import com.wavesplatform.wavesj.transactions.IssueTransactionV2;
 import com.wavesplatform.wavesj.transactions.MassTransferTransaction;
 import org.apache.commons.lang3.RandomStringUtils;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
@@ -155,5 +157,15 @@ public class UtilsSteps extends NodeDefaults {
 
     public void deleteFile(String orderidsFile) throws IOException {
         Files.deleteIfExists(Paths.get(orderidsFile));
+    }
+
+    public List<String> parseAssetIdsFromFile(String fileName) throws IOException {
+        List<String> scriptedAssetIds = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            while (br.ready()) {
+                scriptedAssetIds.add(br.readLine());
+            }
+        }
+        return scriptedAssetIds;
     }
 }
