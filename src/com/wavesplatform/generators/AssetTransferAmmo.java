@@ -53,7 +53,7 @@ public class AssetTransferAmmo {
 
             for (String asset : assetList) {
                 txCount++;
-                if (txCount % 20 == 0) {
+                if (txCount % 60 == 0) {
                     timestamp += 1000;
                 }
 
@@ -68,7 +68,7 @@ public class AssetTransferAmmo {
     }
 
     public void genAssetTransferTxs(String seedPart, String assetIdsFileName, boolean isScripted, String fileName) throws IOException {
-        utils.deleteFile(fileName);
+        //utils.deleteFile(fileName);
 
         int accountsNum = 10;
         List<PrivateKeyAccount> pks = new ArrayList<>();
@@ -77,25 +77,74 @@ public class AssetTransferAmmo {
         PrivateKeyAccount senderPk;
         List<PrivateKeyAccount> senderPks = new ArrayList<>();
         List<String> distributedAssetIds = new ArrayList<>();
-        for (int i = 0; i < 40; i++) {
+//        for (int i = 0; i <= 14; i++) {
+//            senderPk = PrivateKeyAccount.fromSeed(seedPart + i, 0, chainId);
+//            senderPks.add(senderPk);
+//            distributedAssetIds = prepare(i);//prepare(seedPart + i);
+//            if (distributedAssetIds.size() != 0)
+//                writeDistributeAssets(senderPk, pks, distributedAssetIds, isScripted, fileName);
+//            System.out.println("iter:"+i);
+//        }
+        for (int i = 22; i <= 29; i++) {
             senderPk = PrivateKeyAccount.fromSeed(seedPart + i, 0, chainId);
             senderPks.add(senderPk);
-            distributedAssetIds = prepare(seedPart + i);//utils.parseAssetIdsFromFile(assetIdsFileName);
+            distributedAssetIds = prepare(i);//prepare(seedPart + i);
             if (distributedAssetIds.size() != 0)
                 writeDistributeAssets(senderPk, pks, distributedAssetIds, isScripted, fileName);
-            System.out.println(i);
+            System.out.println("iter:"+i);
         }
         long feeAmount = (long) (Math.ceil(distributedAssetIds.size() * 0.005));
         utils.distributeWaves(richPk, senderPks, feeAmount, true, 0);
 
     }
+//utils.getAccountsBySeed(seed + txsQuantity + "i2" + i, 1, 0)
+private List<String> prepare(int i) throws IOException {
+    List<String> ids = new ArrayList<>();
 
+    ids = utils.parseAssetIdsFromFile("idsi"+i+".txt");
+//    if(i < 10){
+//        List<String> idss = new ArrayList<>();
+//        for (int j = i * 8000 + 1; j <= (i+1)*8000; j++) {
+//            System.out.println(j);
+//            idss = utils.parseAssetIdsFromFile("IDisstx80k0to9.txt");
+//            if (j % 2 == 0){
+//            ids.add(idss.get(j));
+//            }
+//        }
+//    }
+//    else if (i < 20 && i > 9) {
+//        List<String> idss = new ArrayList<>();
+//        for (int j = i * 8000 + 1; j <= (i+1)*8000; j++) {
+//            System.out.println(j);
+//            idss = utils.parseAssetIdsFromFile("IDisstx80k10to19.txt");
+//            if (j % 2 == 0){
+//                ids.add(idss.get(j));
+//            }
+//        }
+//    } else {
+//        List<String> idss = new ArrayList<>();
+//        for (int j = i * 8000 + 1; j <= (i+1)*8000; j++) {
+//            System.out.println(j);
+//            idss = utils.parseAssetIdsFromFile("nonScriptedAssetIds2.txt");
+//            if (j % 3 == 0){
+//                ids.add(idss.get(j));
+//            }
+//    }
+//    }
+    return ids;
+
+}
     private List<String> prepare(String seedPart) throws IOException {
         List<String> ids = new ArrayList<>();
+        System.out.println(seedPart);
         PrivateKeyAccount senderPk = PrivateKeyAccount.fromSeed(seedPart, 0, chainId);
         List<AssetBalance> assetBalanceList = node.getAssetsBalance(senderPk.getAddress());
 
-        for (int i = 0; i < assetBalanceList.size() / 2; i++) {
+//        for (int i = 0; i < assetBalanceList.size() / 2; i++) {
+//            if (assetBalanceList.get(i).balance == 1l)
+//                ids.add(assetBalanceList.get(i).getPriceAsset());
+//        }
+        for (int i = 0; i < 3448; i++) {
             if (assetBalanceList.get(i).balance == 1l)
                 ids.add(assetBalanceList.get(i).getPriceAsset());
         }

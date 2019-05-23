@@ -51,9 +51,7 @@
         <dependency>
             <groupId>com.wavesplatform</groupId>
             <artifactId>wavesj</artifactId>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/wavesj-0.14-jar-with-dependencies.jar</systemPath>
-            <version>0.14</version>
+            <version>0.15.0</version>
         </dependency>
         <dependency>
             <groupId>com.jayway.restassured</groupId>

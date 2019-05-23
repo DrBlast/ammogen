@@ -6,7 +6,6 @@ import com.wavesplatform.steps.UtilsSteps;
 import com.wavesplatform.wavesj.Node;
 import com.wavesplatform.wavesj.PrivateKeyAccount;
 import com.wavesplatform.wavesj.Transactions;
-import com.wavesplatform.wavesj.transactions.IssueTransactionV1;
 import com.wavesplatform.wavesj.transactions.IssueTransactionV2;
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -41,7 +40,7 @@ public class IssueAmmo {
 
             for (PrivateKeyAccount pk : issuerPks) {
                 for (int i = 0; i < txsQuantity; i++) {
-                    if (i % 10 == 0) {
+                    if (i % 65 == 0) {
                         timestamp += 1000;
                     }
 
@@ -82,7 +81,7 @@ public class IssueAmmo {
 
         List<PrivateKeyAccount> pks = new ArrayList<>();
         for (int i = 0; i < accountsQuantity; i++) {
-            pks.addAll(utils.getAccountsBySeed(seed + i + "accquantity" + accountsQuantity, 1, 0));
+            pks.addAll(utils.getAccountsBySeed(seed + txsQuantity + "i2" + i, 1, 0));
         }
         for (PrivateKeyAccount pk: pks){
             System.out.println(pk.getAddress() + "\r\n");

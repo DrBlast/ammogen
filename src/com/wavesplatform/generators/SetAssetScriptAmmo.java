@@ -9,6 +9,7 @@ import com.wavesplatform.wavesj.Node;
 import com.wavesplatform.wavesj.PrivateKeyAccount;
 import com.wavesplatform.wavesj.Transactions;
 import com.wavesplatform.wavesj.transactions.IssueTransactionV2;
+import com.wavesplatform.wavesj.transactions.SetAssetScriptTransaction;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -41,8 +42,8 @@ public class SetAssetScriptAmmo {
             for (String assetId : utils.parseAssetIdsFromFile(assetIdsFileName)) {
                 /**TODO: change IssueTransaction to SetAssetScriptTransaction (remove quantity, reissuable
                  *  and decimal, replace name with assetId)*/
-                IssueTransactionV2 tx = Transactions.makeIssueTx(senderPk, TestVariables.getChainId(), assetId, "desciption",
-                        0, (byte) 0, true, script, 100400000, timestamp);
+                SetAssetScriptTransaction tx = Transactions.makeSetAssetScriptTransaction(senderPk, TestVariables.getChainId(),
+                        assetId, script, 100000000, timestamp);
                 ammoWriter.write(ammoSteps.printPostWithDefaultHeaders(getJson(tx), "/transactions/broadcast", "setassetscript"));
                 timestamp += 1000;
             }

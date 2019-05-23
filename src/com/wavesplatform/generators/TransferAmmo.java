@@ -41,7 +41,7 @@ public class TransferAmmo {
             IOException {
         utils.deleteFile(fileName);
         try(FileWriter ammoWriter = new FileWriter(fileName)) {
-            int allTxNum = 20000;
+            int allTxNum = 100000;
             long timestamp = System.currentTimeMillis();
             long txCount = 0;
 
