@@ -110,8 +110,8 @@ public class MassTransferAmmo {
         int accountsNum = 3000;
         int startNonce = 0;
         List<PrivateKeyAccount> pks = new ArrayList<>();
-        pks.addAll(utils.getAccountsBySeed(seedPart + "x0", accountsNum, startNonce));
-        pks.addAll(utils.getAccountsBySeed(seedPart + "x1", accountsNum, startNonce));
+        pks.addAll(utils.getAccountsBySeed(seedPart + "x0", accountsNum));
+        pks.addAll(utils.getAccountsBySeed(seedPart + "x1", accountsNum));
         prep(pks, assetNum, fileName);
     }
 }

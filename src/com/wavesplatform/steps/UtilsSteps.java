@@ -129,10 +129,10 @@ public class UtilsSteps extends NodeDefaults {
     }
 
     
-    public List<PrivateKeyAccount> getAccountsBySeed(String seedPart, int numberOfAccounts, int startNonce) {
+    public List<PrivateKeyAccount> getAccountsBySeed(String seedPart, int numberOfAccounts) {
         ArrayList<PrivateKeyAccount> pks = new ArrayList<>();
-        for (int nonce = startNonce; nonce < startNonce + numberOfAccounts; nonce++) {
-            pks.add(PrivateKeyAccount.fromSeed(seedPart, nonce, chainId));
+        for (int i = 1; i <= numberOfAccounts; i++) {
+            pks.add(PrivateKeyAccount.fromSeed(seedPart + i, 0, chainId));
         }
         return pks;
     }

@@ -41,7 +41,7 @@ public class MatcherAmmo {
         matcherNode = new Node(getMatcherUrl(), getChainId());
     }
 
-    private Map<String, Integer> prep(List<PrivateKeyAccount> pks, int assetsNum, int accountsNum, int startNonce) throws InterruptedException, IOException, TimeoutException, URISyntaxException {
+    private Map<String, Integer> prep(List<PrivateKeyAccount> pks, int assetsNum) throws InterruptedException, IOException, TimeoutException, URISyntaxException {
         Random r = new Random();
         Map<String, Integer> assetMap = new LinkedHashMap<>();
         for (int i = 0; i < assetsNum; i++) {
@@ -76,9 +76,8 @@ public class MatcherAmmo {
         int accountsNum = 100;
         int startNonce = 0;
 
-//        PrivateKeyAccount pks = utils.getAccountsBySeed(customSeed, accountsNum, startNonce)
-        List<PrivateKeyAccount> pks = utils.getAccountsBySeed(seed, accountsNum, startNonce);
-        Map<String, Integer> assetMap = prep(pks, 2, accountsNum, startNonce);
+        List<PrivateKeyAccount> pks = utils.getAccountsBySeed(seed, accountsNum);
+        Map<String, Integer> assetMap = prep(pks, 2);
         AssetPair pair = createAssetPairs(assetMap).get(0);
         int amountDecimals = assetMap.get(pair.getAmountAsset());
         int priceDecimals = assetMap.get(pair.getPriceAsset());
@@ -149,7 +148,7 @@ public class MatcherAmmo {
         int startNonce = 0;
         int accountsNum = 100;
         long currentTs = System.currentTimeMillis();
-        List<PrivateKeyAccount> pks = utils.getAccountsBySeed(seed, accountsNum, startNonce);
+        List<PrivateKeyAccount> pks = utils.getAccountsBySeed(seed, accountsNum);
         utils.deleteFile(fullHistoryFile);
 
         for (int j = 0; j < 10000; j++) {
@@ -172,7 +171,7 @@ public class MatcherAmmo {
         List<AssetPair> assetPairs = singletonList(
                 new AssetPair(amountAsset, priceAsset)
         );
-        List<PrivateKeyAccount> pks = utils.getAccountsBySeed(seed, accountsNum, startNonce);
+        List<PrivateKeyAccount> pks = utils.getAccountsBySeed(seed, accountsNum);
         for (int j = 0; j < 10000; j++) {
             List<String> nextAmmo = new ArrayList<>();
 
@@ -194,8 +193,8 @@ public class MatcherAmmo {
         int assetNum = 20;
         utils.deleteFile(fileName);
 
-        List<PrivateKeyAccount> pks = utils.getAccountsBySeed(seed, accountsNum, startNonce);
-        Map<String, Integer> assetMap = prep(pks, assetNum, accountsNum, startNonce);
+        List<PrivateKeyAccount> pks = utils.getAccountsBySeed(seed, accountsNum);
+        Map<String, Integer> assetMap = prep(pks, assetNum);
         List<AssetPair> pairsList = createAssetPairs(assetMap);
 
 
@@ -249,8 +248,8 @@ public class MatcherAmmo {
         int accountsNum = 3500;
         int startNonce = 0;
         int assetNum = 20;
-        List<PrivateKeyAccount> pks = utils.getAccountsBySeed(seed, accountsNum, startNonce);
-        Map<String, Integer> assetMap = prep(pks, assetNum, accountsNum, startNonce);
+        List<PrivateKeyAccount> pks = utils.getAccountsBySeed(seed, accountsNum);
+        Map<String, Integer> assetMap = prep(pks, assetNum);
         List<AssetPair> pairsList = createAssetPairs(assetMap);
 
         List<String> remAssets = new ArrayList<>();
@@ -326,7 +325,7 @@ public class MatcherAmmo {
         utils.deleteFile(fileName);
         int accountsNum = 2000;
         int startNonce = 0;
-        List<PrivateKeyAccount> pks = new ArrayList<>(utils.getAccountsBySeed(seed, accountsNum, startNonce));
+        List<PrivateKeyAccount> pks = new ArrayList<>(utils.getAccountsBySeed(seed, accountsNum));
 
         Random r = new Random();
 
