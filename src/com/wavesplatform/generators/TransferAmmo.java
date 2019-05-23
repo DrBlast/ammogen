@@ -71,8 +71,8 @@ public class TransferAmmo {
         String script = null;
 
         List<PrivateKeyAccount> pks = new ArrayList<>();
-        pks.addAll(utils.getAccountsBySeed(seedPart + "x0", accountsNum, 0));
-        pks.addAll(utils.getAccountsBySeed(seedPart + "x1", accountsNum, 0));
+        pks.addAll(utils.getAccountsBySeed(seedPart + "x0", accountsNum));
+        pks.addAll(utils.getAccountsBySeed(seedPart + "x1", accountsNum));
 
         Map<String, Integer> assetMap = new LinkedHashMap<>();
         for (int i = 0; i < assetsNum; i++) {

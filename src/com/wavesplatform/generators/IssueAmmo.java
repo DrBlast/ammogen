@@ -77,19 +77,14 @@ public class IssueAmmo {
     public void genIssueTxs(int accountsQuantity, int txsQuantity, boolean isScripted, String fileName, String seed) throws IOException, InterruptedException {
         int assetsQuantity = 1;
         int decimals = 0;
-//        long feeAmmountSum = (long) Math.ceil(txsQuantity * 0.005);
 
         List<PrivateKeyAccount> pks = new ArrayList<>();
-        for (int i = 0; i < accountsQuantity; i++) {
-            pks.addAll(utils.getAccountsBySeed(seed + txsQuantity + "i2" + i, 1, 0));
-        }
-        for (PrivateKeyAccount pk: pks){
+        pks.addAll(utils.getAccountsBySeed(seed + txsQuantity + "i", accountsQuantity));
+        for (PrivateKeyAccount pk : pks) {
             System.out.println(pk.getAddress() + "\r\n");
         }
-//        pks.addAll(utils.getAccountsBySeed(seed, accountsQuantity, 0));
 
         utils.distributeWaves(richPk, pks, txsQuantity, true, 0);
-//        utils.waitForHeightArise();
 
         writeAssets(pks, txsQuantity, assetsQuantity, (byte) decimals, isScripted, fileName);
     }

@@ -55,8 +55,8 @@ public class ApiAmmoGen {
         int maxH = node.getHeight();
 
         List<PrivateKeyAccount> pks = new ArrayList<>();
-        pks.addAll(utils.getAccountsBySeed(seed + "x0", accountsNum, startNonce));
-        pks.addAll(utils.getAccountsBySeed(seed + "x1", accountsNum, startNonce));
+        pks.addAll(utils.getAccountsBySeed(seed + "x0", accountsNum));
+        pks.addAll(utils.getAccountsBySeed(seed + "x1", accountsNum));
 //1542383360903
 
         List<String> t;

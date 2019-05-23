@@ -66,14 +66,14 @@ public class AssetTransferAmmo {
         }
 
     }
-
+    //TODO: remove hardcode and make it works general-purpose
     public void genAssetTransferTxs(String seedPart, String assetIdsFileName, boolean isScripted, String fileName) throws IOException {
         //utils.deleteFile(fileName);
 
         int accountsNum = 10;
         List<PrivateKeyAccount> pks = new ArrayList<>();
-        pks.addAll(utils.getAccountsBySeed(seedPart + "x0", accountsNum, 1));
-        pks.addAll(utils.getAccountsBySeed(seedPart + "x1", accountsNum, 1));
+        pks.addAll(utils.getAccountsBySeed(seedPart + "x0", accountsNum));
+        pks.addAll(utils.getAccountsBySeed(seedPart + "x1", accountsNum));
         PrivateKeyAccount senderPk;
         List<PrivateKeyAccount> senderPks = new ArrayList<>();
         List<String> distributedAssetIds = new ArrayList<>();
@@ -88,7 +88,7 @@ public class AssetTransferAmmo {
         for (int i = 22; i <= 29; i++) {
             senderPk = PrivateKeyAccount.fromSeed(seedPart + i, 0, chainId);
             senderPks.add(senderPk);
-            distributedAssetIds = prepare(i);//prepare(seedPart + i);
+            distributedAssetIds = utils.parseAssetIdsFromFile(assetIdsFileName + i);
             if (distributedAssetIds.size() != 0)
                 writeDistributeAssets(senderPk, pks, distributedAssetIds, isScripted, fileName);
             System.out.println("iter:"+i);
@@ -97,40 +97,11 @@ public class AssetTransferAmmo {
         utils.distributeWaves(richPk, senderPks, feeAmount, true, 0);
 
     }
-//utils.getAccountsBySeed(seed + txsQuantity + "i2" + i, 1, 0)
+
 private List<String> prepare(int i) throws IOException {
     List<String> ids = new ArrayList<>();
 
     ids = utils.parseAssetIdsFromFile("idsi"+i+".txt");
-//    if(i < 10){
-//        List<String> idss = new ArrayList<>();
-//        for (int j = i * 8000 + 1; j <= (i+1)*8000; j++) {
-//            System.out.println(j);
-//            idss = utils.parseAssetIdsFromFile("IDisstx80k0to9.txt");
-//            if (j % 2 == 0){
-//            ids.add(idss.get(j));
-//            }
-//        }
-//    }
-//    else if (i < 20 && i > 9) {
-//        List<String> idss = new ArrayList<>();
-//        for (int j = i * 8000 + 1; j <= (i+1)*8000; j++) {
-//            System.out.println(j);
-//            idss = utils.parseAssetIdsFromFile("IDisstx80k10to19.txt");
-//            if (j % 2 == 0){
-//                ids.add(idss.get(j));
-//            }
-//        }
-//    } else {
-//        List<String> idss = new ArrayList<>();
-//        for (int j = i * 8000 + 1; j <= (i+1)*8000; j++) {
-//            System.out.println(j);
-//            idss = utils.parseAssetIdsFromFile("nonScriptedAssetIds2.txt");
-//            if (j % 3 == 0){
-//                ids.add(idss.get(j));
-//            }
-//    }
-//    }
     return ids;
 
 }
@@ -140,13 +111,9 @@ private List<String> prepare(int i) throws IOException {
         PrivateKeyAccount senderPk = PrivateKeyAccount.fromSeed(seedPart, 0, chainId);
         List<AssetBalance> assetBalanceList = node.getAssetsBalance(senderPk.getAddress());
 
-//        for (int i = 0; i < assetBalanceList.size() / 2; i++) {
-//            if (assetBalanceList.get(i).balance == 1l)
-//                ids.add(assetBalanceList.get(i).getPriceAsset());
-//        }
         for (int i = 0; i < 3448; i++) {
             if (assetBalanceList.get(i).balance == 1l)
-                ids.add(assetBalanceList.get(i).getPriceAsset());
+                ids.add(assetBalanceList.get(i).getAssetId());
         }
         return ids;
     }
